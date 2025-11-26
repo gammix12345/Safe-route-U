@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saferoute U</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Leaflet CDN (Mapa de Cartagena real) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</head>
+<body>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div id="app">
+
+        <!-- PANTALLA DE REGISTRO -->
+        <section id="registerScreen" class="screen active">
+            <h1 class="title">Saferoute <span>U</span></h1>
+            <h2 class="subtitle">Registro</h2>
+
+            <form id="registerForm">
+                <input type="text" id="regName" placeholder="Nombre" required pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+">
+                <input type="text" id="regLastName" placeholder="Apellidos" required pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ ]+">
+                <input type="text" id="regCedula" placeholder="Número de cédula" required pattern="[0-9]+">
+                <input type="text" id="regTelefono" placeholder="Número de teléfono" required pattern="[0-9]+">
+                <input type="email" id="regEmail" placeholder="Correo electrónico" required>
+
+                <!-- BARRIO LIBRE -->
+                <input type="text" id="regBarrio" placeholder="Barrio" required>
+
+                <!-- UNIVERSIDADES DE CARTAGENA -->
+                <select id="regUniversidad" required>
+                    <option value="">Seleccione universidad</option>
+                    <option>Universidad de Cartagena</option>
+                    <option>Universidad Tecnológica de Bolívar</option>
+                    <option>Colegio Mayor</option>
+                    <option>SENA Cartagena</option>
+                </select>
+
+                <input type="password" id="regPassword" placeholder="Crear contraseña" required>
+
+                <button type="submit" class="btn-main">Registrarse</button>
+            </form>
+
+            <p class="switch">¿Ya tienes cuenta? <span onclick="goToLogin()">Inicia sesión</span></p>
+        </section>
+
+        <!-- PANTALLA DE INICIO DE SESIÓN -->
+        <section id="loginScreen" class="screen">
+            <h1 class="title">Saferoute <span>U</span></h1>
+            <h2 class="subtitle">Iniciar sesión</h2>
+
+            <form id="loginForm">
+                <input type="text" id="loginUser" placeholder="Usuario (cédula/correo/teléfono)" required>
+                <input type="password" id="loginPass" placeholder="Contraseña" required>
+                <button type="submit" class="btn-main">Entrar</button>
+            </form>
+
+            <p class="switch">¿No tienes cuenta? <span onclick="goToRegister()">Regístrate</span></p>
+        </section>
+
+        <!-- PANTALLA PRINCIPAL -->
+        <section id="homeScreen" class="screen">
+            <header class="header">
+                <h2>Saferoute U</h2>
+            </header>
+
+            <!-- MAPA CARTAGENA -->
+            <div id="map"></div>
+
+            <!-- MENÚ INFERIOR -->
+            <nav class="bottom-nav">
+                <button onclick="openScreen('familyScreen')">👨‍👩‍👧 Núcleo</button>
+                <button onclick="openScreen('sosScreen')">🚨 SOS</button>
+                <button onclick="openScreen('routesScreen')">🗺 Rutas</button>
+                <button onclick="openScreen('reportScreen')">📢 Reportar</button>
+                <button onclick="openScreen('forumScreen')">💬 Acompañamiento</button>
+            </nav>
+        </section>
+
+        <!-- NÚCLEO FAMILIAR -->
+        <section id="familyScreen" class="screen">
+            <h2 class="subtitle">Núcleo Familiar</h2>
+            <form id="familyForm">
+                <input type="text" id="famName" placeholder="Nombre" required>
+                <input type="text" id="famLast" placeholder="Apellidos" required>
+
+                <!-- LINK GENERADO POR LA APP -->
+                <input type="text" id="famLink" placeholder="Link de ubicación (generado)" value="https://saferouteU.app/location/XYZ123" readonly>
+
+                <button class="btn-main">Agregar miembro</button>
+            </form>
+
+            <button class="btn-back" onclick="openScreen('homeScreen')">Volver</button>
+        </section>
+
+        <!-- SOS -->
+        <section id="sosScreen" class="screen">
+            <h2 class="subtitle">Alerta SOS</h2>
+            <p>Configura permisos de emergencia y alertas a familia y CAI.</p>
+            <button class="btn-sos">ENVIAR SOS</button>
+            <button class="btn-back" onclick="openScreen('homeScreen')">Volver</button>
+        </section>
+
+        <!-- RUTAS SEGURAS -->
+        <section id="routesScreen" class="screen">
+            <h2 class="subtitle">Rutas Seguras</h2>
+
+            <div class="legend">
+                <p><span class="color green"></span>Seguro</p>
+                <p><span class="color yellow"></span>Advertencia</p>
+                <p><span class="color red"></span>Peligro</p>
+            </div>
+
+            <p>Rutas se actualizan en tiempo real según incidentes reportados.</p>
+
+            <button class="btn-back" onclick="openScreen('homeScreen')">Volver</button>
+        </section>
+
+        <!-- REPORTAR -->
+        <section id="reportScreen" class="screen">
+            <h2 class="subtitle">Reportar incidente</h2>
+
+            <select id="incidentType">
+                <option>Disturbios</option>
+                <option>Robo</option>
+                <option>Amenaza</option>
+                <option>Accidente</option>
+                <option>Otro</option>
+            </select>
+
+            <textarea id="incidentDesc" placeholder="Describe el incidente"></textarea>
+            <button class="btn-main">Enviar reporte</button>
+
+            <button class="btn-back" onclick="openScreen('homeScreen')">Volver</button>
+        </section>
+
+        <!-- ACOMPAÑAMIENTO -->
+        <section id="forumScreen" class="screen">
+            <h2 class="subtitle">Acompañamiento</h2>
+            <p>Espacio en línea para coordinar rondas y trayectos seguros.</p>
+
+            <textarea placeholder="Escribe tu mensaje..."></textarea>
+            <button class="btn-main">Enviar</button>
+
+            <button class="btn-back" onclick="openScreen('homeScreen')">Volver</button>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
